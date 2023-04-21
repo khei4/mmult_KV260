@@ -2,13 +2,12 @@
 
 void mat_mul(AXI_STREAM &in_strm, AXI_STREAM &out_strm) {
 // TODO:なんぞこの行
-// TODO: clang-formatに=の前後に空白挿入されるけど大丈夫か？
 #pragma HLS INTERFACE s_axilite port=return bundle=CONTROL_BUS
 
 #pragma HLS INTERFACE axis port = in_strm
 #pragma HLS INTERFACE axis port = out_strm
-  int mat_a[SIZE][SIZE];
-  int mat_b[SIZE][SIZE];
+  unsigned int mat_a[SIZE][SIZE];
+  unsigned int mat_b[SIZE][SIZE];
 
 // TODO: いろいろな分割の仕方をためしてみる
 #pragma HLS ARRAY_PARTITION variable=mat_a complete dim=0
@@ -33,6 +32,10 @@ void mat_mul(AXI_STREAM &in_strm, AXI_STREAM &out_strm) {
   }
 
   AP_AXIS out_val;
+  out_val.keep = elem.keep;
+  // ストローブ信号
+  out_val.strb = elem.strb;
+  out_val.last = 0;
   for (int i = 0; i < SIZE; ++i)
     for (int j = 0; j < SIZE; ++j) {
       // TODO: ここにPIPELINEを入れた場合どんな回路ができるか全く読めていない
