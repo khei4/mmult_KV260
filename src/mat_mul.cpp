@@ -38,7 +38,7 @@ void mat_mul(AXI_STREAM &in_strm, AXI_STREAM &out_strm) {
   out_val.last = 0;
   for (int i = 0; i < SIZE; ++i)
     for (int j = 0; j < SIZE; ++j) {
-      // TODO: ここにPIPELINEを入れた場合どんな回路ができるか全く読めていない
+      // TODO: ここにPIPELINEを入れた場合どんな回路ができるかよくわかってない
 #pragma HLS PIPELINE II=1
       out_val.data = 0;
       for (int k = 0; k < SIZE; ++k)
