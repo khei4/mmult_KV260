@@ -1,7 +1,6 @@
 #include "mat_mul.h"
 
 void mat_mul(AXI_STREAM &in_strm, AXI_STREAM &out_strm) {
-// TODO:なんぞこの行
 #pragma HLS INTERFACE s_axilite port=return bundle=CONTROL_BUS
 
 #pragma HLS INTERFACE axis port = in_strm
@@ -23,7 +22,9 @@ void mat_mul(AXI_STREAM &in_strm, AXI_STREAM &out_strm) {
     }
   }
 
+loop_bi:
   for (int i = 0; i < SIZE; ++i) {
+  loop_bj:
     for (int j = 0; j < SIZE; ++j) {
 #pragma HLS PIPELINE II=1
       elem = in_strm.read();
@@ -36,16 +37,17 @@ void mat_mul(AXI_STREAM &in_strm, AXI_STREAM &out_strm) {
   // ストローブ信号
   out_val.strb = elem.strb;
   out_val.last = 0;
-  for (int i = 0; i < SIZE; ++i)
-    for (int j = 0; j < SIZE; ++j) {
-      // TODO: ここにPIPELINEを入れた場合どんな回路ができるかよくわかってない
+  loop_i:
+    for (int i = 0; i < SIZE; ++i)
+    loop_j:
+      for (int j = 0; j < SIZE; ++j) {
 #pragma HLS PIPELINE II=1
       out_val.data = 0;
+    loop_k:
       for (int k = 0; k < SIZE; ++k)
         out_val.data += mat_a[i][k] * mat_b[k][j];
-      if (i + 1 == SIZE && j + 1 == SIZE) 
+      if (i + 1 == SIZE && j + 1 == SIZE)
         out_val.last = 1;
       out_strm << out_val;
-      
-    }
+      }
 }
